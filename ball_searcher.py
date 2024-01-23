@@ -3,12 +3,14 @@ import numpy as np
 
 class BallSearcher:
     def __init__(self):
-        self.yellowLower = (14, 180, 200)# dark
-        self.yellowUpper = (34, 255, 255) # light
+        #self.yellowLower = (14, 180, 200)# dark
+        #self.yellowUpper = (34, 255, 255) # light
+        self.yellowLower = (15, 121, 192)# dark
+        self.yellowUpper = (66, 255, 255) # light
         self.font                   = cv2.FONT_HERSHEY_SIMPLEX
         self.bottomLeftCornerOfText = (30,50)
         self.fontScale = 0.5
-        self.fontColor = (255,255,255)
+        self.fontColor = (0,0,0)
         self.lineType = 1
         self.current_data = {"obj_x":0,"obj_y":0, "obj_r":0}
         
@@ -35,7 +37,7 @@ class BallSearcher:
             center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
         if radius > 10:
             self.current_data = {"obj_x": int(x),"obj_y": int(y), "obj_r": int(radius)}
-            cv2.circle(frame, (int(x), int(y)), int(radius), (0, 255, 255), 2)
+            cv2.circle(frame, (int(x), int(y)), int(radius), (0, 0, 0), 2)
             cv2.circle(frame, center, 5, (0, 0, 255), -1)
         cv2.putText(frame,"({:d},{:d},{:d})".format(int(x),int(y),int(radius)), (int(x), int(y)), self.font, self.fontScale, self.fontColor, self.lineType)
         
