@@ -73,9 +73,9 @@ def move(dist, vel):
     while not rospy.is_shutdown() and not stop.data and current_distance <= dist:
         current_distance = abs(get_distance(start_pose.pose.pose.position, odom.pose.pose.position))
         print(current_distance,dist) 
-        move(vel, 0) 
+        move_func(vel, 0) 
     rospy.sleep(0.1)
-    move(0, 0) 
+    move_func(0, 0) 
     rospy.loginfo("move done!") 
     rospy.sleep(0.1)
 
