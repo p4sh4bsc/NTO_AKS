@@ -1,0 +1,4 @@
+<launch>
+  <node pkg="main_package" type="main_rover.py" name="main"/>
+  <node pkg="main_package" type="protocol_trasceiver.py" name="radio"/>
+</launch>

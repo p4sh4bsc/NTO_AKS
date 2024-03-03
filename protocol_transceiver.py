@@ -14,7 +14,7 @@ from std_msgs.msg import Bool
 def image_callback(data):
     global image_msg
     image_msg = data
-    
+
 radio = serial.Serial(port='', baudrate='', timeout=2)
 radio.setDTR(False)
 
@@ -50,9 +50,6 @@ def get_img():
     img_len = len(compressed_img)
 
     return compressed_img, img_len
-
-
-
 
 
 
