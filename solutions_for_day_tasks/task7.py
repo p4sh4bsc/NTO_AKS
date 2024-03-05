@@ -1,7 +1,8 @@
 # import time                                                                                   #  
 # import math                                                                                   #
 # import rospy
-import keyboard                                                                                  # <- подгружаем нужные либы 
+import keyboard
+import os                                                                                  # <- подгружаем нужные либы 
 # from std_msgs.msg import Bool, String, Odometry, Twist, UInt16, Int16, UInt8MultiArray        #
 # from tf.transformations import quaternion_multiply, quaternion_inverse, euler_from_quaternion #
 
@@ -90,5 +91,10 @@ if __name__ == "__main__":
         elif keyboard.is_pressed(45):
             print('making slower (vel = {vel})')
             vel-=0.1
+        else:
+            os.system('clear')
+            print('waiting for buuton')
+
+        
         
         

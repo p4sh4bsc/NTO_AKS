@@ -1,6 +1,6 @@
 import time                                                                                   #  
 import math                                                                                   #
-import rospy                                                                         # <- подгружаем нужные либы 
+import rospy                                                                                  # <- подгружаем нужные либы 
 from std_msgs.msg import Bool, String, Odometry, Twist, UInt16, Int16, UInt8MultiArray        #
 from tf.transformations import quaternion_multiply, quaternion_inverse, euler_from_quaternion #
 
@@ -69,14 +69,12 @@ if __name__ == "__main__":
     vel = 1
     print(f"Starting rover, vel={vel} ")
     while not rospy.is_shutdown():
-        command = str(input('Введите команду: '))
-        param, value = command.split()
+        command = str(input('Введите команду: ')) # читаем команду
+        param, value = command.split() # обрабатываем строку параметр и значение, указанные через пробел
 
         if command == 'W':
-            move(value, vel)
-        elif command == 'R':
+            move(value, vel) # вперед/назад
+        elif command == 'R': # вправо/влево
             rotate(value, vel)
-        elif command == 'P':
-            make_photo()
-        elif command == 'V':
+        elif command == 'V': # установить новое значение для скорости
             vel = param
