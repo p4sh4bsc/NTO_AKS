@@ -1,12 +1,12 @@
 import time                                                                                   #  
 import math                                                                                   #
 import rospy
-import keyboard
-import os                                                                                  # <- подгружаем нужные либы 
-from std_msgs.msg import Bool, String, UInt16, Int16, UInt8MultiArray        #
+import os                                                                                     # <- подгружаем нужные либы 
+from std_msgs.msg import Bool, String, UInt16, Int16, UInt8MultiArray                         #
 from tf.transformations import quaternion_multiply, quaternion_inverse, euler_from_quaternion #
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Twist
+import sys,tty,os,termios
 
 def odom_callback(data): # получение одометрии
     global odom
@@ -58,14 +58,12 @@ def rotate(angle, vel): # функция для повората ровера н
         move_func(0, z)
     move_func(0,0)
     rospy.loginfo('goal of the angle achived')
-    rospy.sleep(0.1)
+    rospy.sleep(0.1) 
 
 
-import sys,tty,os,termios
-def getkey():
+
+def getkey(): # функция для чтения нажатой кнопки
     old_settings = termios.tcgetattr(sys.stdin)
-    if old_settings is None:
-                print('empty')
     tty.setcbreak(sys.stdin.fileno())
     try:
         while True:
@@ -147,37 +145,6 @@ if __name__ == "__main__":
         print(ex)
         os.system('stty sane')
         print('stopping.')
-    # while True:
-    #     if keyboard.is_pressed('shift'):
-    #         if keyboard.is_pressed('W'):
-    #             print('moving forward with {vel}m/s speed')
-    #             x=vel
-    #             z=0
-    #         elif keyboard.is_pressed(115):
-    #             print('moving backward with {vel}m/s speed')
-    #             x=-vel
-    #             z=0
-    #         elif keyboard.is_pressed(100):
-    #             print('rotating right with {vel}m/s speed')
-    #             z=-vel
-    #             x=0
-    #         elif keyboard.is_pressed(97):
-    #             print('rotating left with {vel}m/s speed')
-    #             z=vel
-    #             z=0
-    #         elif keyboard.is_pressed(61):
-    #             print('making faster (vel = {vel})')
-    #             vel+=0.1
-    #         elif keyboard.is_pressed(45):
-    #             print('making slower (vel = {vel})')
-    #             vel-=0.1
-    #         else:
-    #             x = 0
-    #             z = 0
-    #         move_func(x, z)
-    #     else:
-    #         os.system('clear')
-    #         print('waiting for buuton')
 
         
         
