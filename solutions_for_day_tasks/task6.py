@@ -1,7 +1,7 @@
 import time                                                                                   #  
 import math                                                                                   #
 import rospy                                                                                  # <- подгружаем нужные либы 
-from std_msgs.msg import Bool, String, UInt16, Int16, UInt8MultiArray        #
+from std_msgs.msg import Bool, String, UInt16, Int16, UInt8MultiArray                         #
 from tf.transformations import quaternion_multiply, quaternion_inverse, euler_from_quaternion #
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Twist

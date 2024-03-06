@@ -205,8 +205,7 @@ def main():
     letsGo=False
     time.sleep(1)
     rospy.Subscriber("/front_camera/image_raw/compressed", CompressedImage, capture)
-    while True:
-        get_photo()
+    get_photo()
 
         
 
