@@ -1,9 +1,11 @@
 import time                                                                                   #  
 import math                                                                                   #
 import rospy                                                                                  # <- подгружаем нужные либы 
-from std_msgs.msg import Bool, String, Odometry, Twist, UInt16, Int16, UInt8MultiArray        #
+from std_msgs.msg import Bool, String, UInt16, Int16, UInt8MultiArray        #
 from tf.transformations import quaternion_multiply, quaternion_inverse, euler_from_quaternion #
-
+from nav_msgs.msg import Odometry
+from geometry_msgs.msg import Twist
+import sys
 
 def odom_callback(data): # получение одометрии
     global odom
@@ -30,22 +32,23 @@ def get_degree_diff(prev_orientation, current_orientation): # фунция дл�
 
 def move(dist, vel): # функция для движения ровера на dist метров вперед/назад(зависит от знака скорости) со скоростью vel
     global odom
-    rospy.sleep(0.5)
+    print(1)
+    time.sleep(0.3)
     start_pose = odom
     current_distance = abs(get_distance(start_pose.pose.pose.position, odom.pose.pose.position))
     dist += current_distance
+    print(dist, current_distance)
     while not rospy.is_shutdown() and current_distance <= dist:
         current_distance = abs(get_distance(start_pose.pose.pose.position, odom.pose.pose.position))
-        print(current_distance,dist) 
         move_func(vel, 0) 
-    rospy.sleep(0.1)
+    time.sleep(0.1)
     move_func(0, 0) 
+    time.sleep(0.1)
     rospy.loginfo("goal achived") 
-    rospy.sleep(0.1)
 
 def rotate(angle, vel): # функция для повората ровера на angle градусов со скорость vel (направление поворота зависит от знака скорости)
     global odom
-    rospy.sleep(0.5)
+    time.sleep(0.3)
     start_orientation = odom
     current_angle = abs(get_degree_diff(start_orientation, odom))
     while not rospy.is_shutdown() and current_angle < angle:
@@ -53,13 +56,13 @@ def rotate(angle, vel): # функция для повората ровера н
         print(current_angle, angle)
         z=vel
         move_func(0, z)
+    time.sleep(0.1)
     move_func(0,0)
+    time.sleep(0.1)
     rospy.loginfo('goal of the angle achived')
-    rospy.sleep(0.1)
-
 
 if __name__ == "__main__":
-    rospy.init_node('mover', log_level=rospy.INFO)
+    rospy.init_node('mover2')
     rospy.Subscriber("odom", Odometry, odom_callback)
     cmd_vel_pub = rospy.Publisher("/cmd_vel", Twist, queue_size=10)
     
@@ -68,13 +71,19 @@ if __name__ == "__main__":
 
     vel = 1
     print(f"Starting rover, vel={vel} ")
-    while not rospy.is_shutdown():
+    while True:
         command = str(input('Введите команду: ')) # читаем команду
         param, value = command.split() # обрабатываем строку параметр и значение, указанные через пробел
 
-        if command == 'W':
-            move(value, vel) # вперед/назад
-        elif command == 'R': # вправо/влево
-            rotate(value, vel)
-        elif command == 'V': # установить новое значение для скорости
-            vel = param
+        if param == 'W':
+            print('starting forward')
+            move(float(value), vel) # вперед/назад
+            print('done!')
+        elif param == 'R': # вправо/влево
+            rotate(float(value), vel)
+        elif param == 'V': # установить новое значение для скорости
+            vel = float(value)
+            print(f'vel = {vel}')
+        else:
+            rospy.signal_shutdown('reason')
+            sys.exit()

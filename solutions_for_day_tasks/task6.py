@@ -1,9 +1,10 @@
 import time                                                                                   #  
 import math                                                                                   #
 import rospy                                                                                  # <- подгружаем нужные либы 
-from std_msgs.msg import Bool, String, Odometry, Twist, UInt16, Int16, UInt8MultiArray        #
+from std_msgs.msg import Bool, String, UInt16, Int16, UInt8MultiArray        #
 from tf.transformations import quaternion_multiply, quaternion_inverse, euler_from_quaternion #
-
+from nav_msgs.msg import Odometry
+from geometry_msgs.msg import Twist
 
 def odom_callback(data): # получение одометрии
     global odom
@@ -30,32 +31,34 @@ def get_degree_diff(prev_orientation, current_orientation): # фунция дл�
 
 def move(dist, vel): # функция для движения ровера на dist метров вперед/назад(зависит от знака скорости) со скоростью vel
     global odom
-    rospy.sleep(0.5)
+    time.sleep(0.2)
     start_pose = odom
     current_distance = abs(get_distance(start_pose.pose.pose.position, odom.pose.pose.position))
     dist += current_distance
     while not rospy.is_shutdown() and current_distance <= dist:
         current_distance = abs(get_distance(start_pose.pose.pose.position, odom.pose.pose.position))
-        print(current_distance,dist) 
+        #print(current_distance,dist) 
         move_func(vel, 0) 
-    rospy.sleep(0.1)
-    move_func(0, 0) 
+    time.sleep(0.1)
+    move_func(0, 0)
+    time.sleep(0.1)
     rospy.loginfo("goal achived") 
-    rospy.sleep(0.1)
 
 def rotate(angle, vel): # функция для повората ровера на angle градусов со скорость vel (направление поворота зависит от знака скорости)
     global odom
-    rospy.sleep(0.5)
+    time.sleep(0.2)
     start_orientation = odom
     current_angle = abs(get_degree_diff(start_orientation, odom))
     while not rospy.is_shutdown() and current_angle < angle:
         current_angle = abs(get_degree_diff(start_orientation, odom)) 
-        print(current_angle, angle)
+        #print(current_angle, angle)
         z=vel
         move_func(0, z)
+    time.sleep(0.1)
     move_func(0,0)
+    time.sleep(0.1)
     rospy.loginfo('goal of the angle achived')
-    rospy.sleep(0.1)
+
 
 
 if __name__ == "__main__":
@@ -65,7 +68,9 @@ if __name__ == "__main__":
     
     rospy.loginfo("success main init")
     
-    move(1.1, 0.5)
-    rotate(180, 0.5)
-    move(1.1, 0.5)
-    move(-0.5, 0.5)
+    move(1.1, 0.2)
+    print('!!! done first move !!!')
+    rotate(176, 0.2)
+    move(1.1, 0.2)
+    move(0.5, -0.2)
+
