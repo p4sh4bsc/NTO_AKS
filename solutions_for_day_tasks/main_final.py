@@ -109,7 +109,9 @@ if __name__ == "__main__":
     #rospy.Subscriber("servo_left_right", Odometry, odom_callback)
     cmd_vel_pub = rospy.Publisher("/cmd_vel", Twist, queue_size=10)
     pub_serv_left_right = rospy.Publisher('servo_left_right', UInt16, queue_size=10) 
-    pub_serv_up_down = rospy.Publisher('servo_up_down', UInt16, queue_size=10)    
+    pub_serv_up_down = rospy.Publisher('servo_up_down', UInt16, queue_size=10)  
+  
+    # add topic for magnit servo
 
     rospy.loginfo("success main init")
     
