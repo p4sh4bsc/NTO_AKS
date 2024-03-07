@@ -118,8 +118,8 @@ if __name__ == "__main__":
     servo_up_down_small = rospy.Publisher('/servo_up_down_small', UInt16, queue_size=10) 
     servo_up_down = rospy.Publisher('/servo_up_down', UInt16, queue_size=10)  
     servo_magnit = rospy.Publisher('/servo_magnit', UInt16, queue_size=10)  
+    servo_cam = rospy.Publisher('/servo_cam', UInt16, queue_size=10)
     magnit = rospy.Publisher('/magnit', UInt16, queue_size=10)  
-    # add topic for magnit servo
 
     rospy.loginfo("success main init")
 
@@ -140,6 +140,8 @@ if __name__ == "__main__":
 
     angle_u_d_small = 90
     angle_u_d = 90
+    angle_magnit = 90
+    angle_cam = 90
 
     for file in os.listdir('/home/pi/photo/'):
         os.remove(f"/home/pi/photo/{file}")
@@ -214,30 +216,78 @@ if __name__ == "__main__":
             x=0
             z=0
 
-        elif k=='u':
-            angle_u_d -= 1
-            if angle_u_d>=55 and angle_u_d<=130:
-                servo_up_down.publish(angle_u_d)
-            elif angle_u_d<55:
-                servo_up_down.publish(55)
-                angle_u_d = 55
-            elif angle_u_d>130:
-                servo_up_down.publish(130)
-                angle_u_d = 130
+        elif k=='up':
+            angle_u_d += 1
+            if angle_u_d>=45 and angle_u_d<=113:
+                servo_up_down.publish(angle_u_d)    
+            elif angle_u_d<45:
+                servo_up_down.publish(45)
+                angle_u_d = 45
+            elif angle_u_d>113:
+                servo_up_down.publish(113)
+                angle_u_d = 113
             x=0
             z=0
         elif k=='down':
-            angle_u_d += 1
-            if angle_u_d>=55 and angle_u_d<=130:
+            angle_u_d -= 1
+            if angle_u_d>=45 and angle_u_d<=113:
                 servo_up_down.publish(angle_u_d)
-            elif angle_u_d<55:
-                servo_up_down.publish(55)
-                angle_u_d = 55
-            elif angle_u_d>130:
-                servo_up_down.publish(130)
-                angle_u_d = 130
+            elif angle_u_d<45:
+                servo_up_down.publish(45)
+                angle_u_d = 45
+            elif angle_u_d>113:
+                servo_up_down.publish(113)
+                angle_u_d = 113
             x=0
             z=0
+
+        elif k=='k':
+            angle_magnit-=1
+            if angle_magnit<0:
+                servo_magnit.publish(0)
+                angle_magnit=0
+            elif angle_magnit>180:
+                servo_magnit.publish(180)
+                angle_magnit=180
+            servo_magnit.publish(angle_magnit)
+            x=0
+            z=0
+
+        elif k=='l':
+            angle_magnit+=1
+            if angle_magnit<0:
+                servo_magnit.publish(0)
+                angle_magnit=0
+            elif angle_magnit>180:
+                servo_magnit.publish(180)
+                angle_magnit=180
+            servo_magnit.publish(angle_magnit)
+            x=0
+            z=0
+
+        elif k=='i':
+            angle_cam+=1
+            if angle_cam<0:
+                servo_cam.publish(0)
+                angle_cam=0
+            elif angle_cam>180:
+                servo_cam.publish(180)
+                angle_cam=180
+            servo_cam.publish(angle_cam)
+            x=0
+            z=0
+        elif k=='o':
+            angle_cam-=1
+            if angle_cam<0:
+                servo_cam.publish(0)
+                angle_cam=0
+            elif angle_cam>180:
+                servo_cam.publish(180)
+                angle_cam=180
+            servo_cam.publish(angle_cam)
+            x=0
+            z=0
+        
         elif k=='m':
             if magnit_on:
                 magnit.publish(0)
@@ -247,18 +297,20 @@ if __name__ == "__main__":
                 magnit_on=True
             x=0
             z=0
+        
         else:
             x = 0
             z = 0
         
-        move_func(x, z)
-        # time.sleep(0.1)
         if vel<0:
             vel=0.1
-        
+
+        move_func(x, z)
         time.sleep(vel)
         move_func(0,0)
-        k = None
+        
+        
+
         
         
         
