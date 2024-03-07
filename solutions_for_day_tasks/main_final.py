@@ -113,11 +113,12 @@ if __name__ == "__main__":
     rospy.init_node('mover', log_level=rospy.INFO)
     rospy.Subscriber("odom", Odometry, odom_callback)
     rospy.Subscriber("/front_camera/image_raw", Image, image_cb)
-    #rospy.Subscriber("servo_left_right", Odometry, odom_callback)
+
     cmd_vel_pub = rospy.Publisher("/cmd_vel", Twist, queue_size=10)
-    pub_serv_left_right = rospy.Publisher('servo_left_right', UInt16, queue_size=10) 
-    pub_serv_up_down = rospy.Publisher('servo_up_down', UInt16, queue_size=10)  
-  
+    servo_up_down_small = rospy.Publisher('serv_up_down_small', UInt16, queue_size=10) 
+    servo_up_down = rospy.Publisher('servo_up_down', UInt16, queue_size=10)  
+    servo_magnit = rospy.Publisher('servo_magnit', UInt16, queue_size=10)  
+    magnit = rospy.Publisher('magnit', UInt16, queue_size=10)  
     # add topic for magnit servo
 
     rospy.loginfo("success main init")
@@ -128,6 +129,7 @@ if __name__ == "__main__":
     vel = 0.2
     count_of_arts = 0
     end = False
+    magnit_on = False
     ip = '192.168.1.170'
     username = 'rosuser8'
     password = 'Vino04122005@&'
@@ -136,7 +138,7 @@ if __name__ == "__main__":
     ssh.connect(ip, username=username, password=password)
     sftp = ssh.open_sftp()
 
-    angle_l_r = 90
+    angle_u_d_small = 90
     angle_u_d = 90
 
     for file in os.listdir('/home/pi/photo/'):
@@ -186,32 +188,53 @@ if __name__ == "__main__":
             z=0
             x=0
             count_of_arts+=1
+
         elif k=='left':
-            angle_l_r -= 1
-            if angle_l_r>=0:
-                pub_serv_left_right.publish(angle_l_r)
-            else:
-                pub_serv_left_right.publish(0)
+            angle_u_d_small -= 1
+            if angle_u_d_small>=40 and angle_u_d_small<=180:
+                serv_up_down_small.publish(angle_u_d_small)
+            elif angle_u_d_small<40:
+                serv_up_down_small.publish(40)
+                angle_u_d_small=40
+            elif angle_u_d_small>180:
+                serv_up_down_small.publish(180)
+                angle_u_d_small=180
         elif k=='right':
-            angle_l_r += 1
-            if angle_l_r<=180:
-                pub_serv_left_right.publish(angle_l_r)
-            else:
-                pub_serv_left_right.publish(180)
+            angle_u_d_small += 1
+            if angle_u_d_small>=40 and angle_u_d_small<=180:
+                serv_up_down_small.publish(angle_u_d_small)
+            elif angle_u_d_small<40:
+                serv_up_down_small.publish(40)
+                angle_u_d_small=40
+            elif angle_u_d_small>180:
+                serv_up_down_small.publish(180)
+                angle_u_d_small=180
+
         elif k=='up':
             angle_u_d -= 1
-            if angle_u_d>=0:
-                pub_serv_up_down.publish(angle_u_d)
-            else:
-                pub_serv_up_down.publish(0)
+            if angle_u_d>=55 and angle_u_d<=130:
+                servo_up_down.publish(angle_u_d)
+            elif angle_u_d<55:
+                servo_up_down.publish(55)
+                angle_u_d = 55
+            elif angle_u_d>130:
+                servo_up_down.publish(130)
+                angle_u_d = 130
         elif k=='down':
             angle_u_d += 1
-            if angle_u_d<=180:
-                pub_serv_up_down.publish(angle_u_d)
-            else:
-                pub_serv_up_down.publish(180)
+            if angle_u_d>=55 and angle_u_d<=130:
+                servo_up_down.publish(angle_u_d)
+            elif angle_u_d<55:
+                servo_up_down.publish(55)
+                angle_u_d = 55
+            elif angle_u_d>130:
+                servo_up_down.publish(130)
+                angle_u_d = 130
         elif k=='m':
-            pass
+            if magnit_on:
+                magnit.publish(0)
+            else:
+                magnit.publish(1)
         else:
             x = 0
             z = 0
