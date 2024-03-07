@@ -9,16 +9,22 @@ from geometry_msgs.msg import Twist
 import sys,tty,os,termios
 import cv2
 import paramiko
-
+from cv_bridge import CvBridge
+from sensor_msgs.msg import CompressedImage, Image
 
 
 
 def odom_callback(data): # получение одометрии
     global odom
     odom = data
-def servo_left_right_callback(data):
-    global angle_l_r
-    angle_l_r = data
+# def servo_left_right_callback(data):
+#     global angle_l_r
+#     angle_l_r = data
+def image_cb(img):
+    global image_msg
+    image_msg = img
+    
+
 def move_func(x,z): # публикуем в топик /cmd_vel переменные x,z соответсвенно для прямолинейного движения и поворота
     pub_vel = Twist()
     pub_vel.linear.x = x
@@ -70,7 +76,7 @@ def rotate(angle, vel): # функция для повората ровера н
 
 def get_frame(count):
     frame = cvBridge.imgmsg_to_cv2(image_msg, "bgr8")
-    cv2.imwrite(f'/home/pi/ssh_photos/art{count+1}.jpeg', frame)
+    cv2.imwrite(f'/home/pi/photo/art{count+1}.jpeg', frame)
 
     
     
@@ -106,6 +112,7 @@ def getkey(): # функция для чтения нажатой кнопки
 if __name__ == "__main__":
     rospy.init_node('mover', log_level=rospy.INFO)
     rospy.Subscriber("odom", Odometry, odom_callback)
+    rospy.Subscriber("/front_camera/image_raw", Image, image_cb)
     #rospy.Subscriber("servo_left_right", Odometry, odom_callback)
     cmd_vel_pub = rospy.Publisher("/cmd_vel", Twist, queue_size=10)
     pub_serv_left_right = rospy.Publisher('servo_left_right', UInt16, queue_size=10) 
@@ -114,12 +121,15 @@ if __name__ == "__main__":
     # add topic for magnit servo
 
     rospy.loginfo("success main init")
-    
+
+    cvBridge = CvBridge()
+    image_msg = Image()
+
     vel = 0.2
     count_of_arts = 0
     end = False
-    ip = 'xxx.xxx.xxx.xxx'
-    username = 'p4sh4bsc'
+    ip = '192.168.1.170'
+    username = 'rosuser8'
     password = 'Vino04122005@&'
     ssh = paramiko.SSHClient() 
     ssh.load_host_keys(os.path.expanduser(os.path.join("~", ".ssh", "known_hosts")))
@@ -128,14 +138,18 @@ if __name__ == "__main__":
 
     angle_l_r = 90
     angle_u_d = 90
+
+    for file in os.listdir('/home/pi/photo/'):
+        os.remove(f"/home/pi/photo/{file}")
+
     while not end:
         k = getkey()
         os.system('clear')
         if k == 'esc':
             stop_it = str(input('U rly wanna stop it and send photos of arts? (Y/n): '))
             if stop_it.lower() == 'y':
-                for file in os.listdir('/home/pi/ssh_photos/'):
-                    sftp.put(f'/home/pi/ssh_photos/{file}', remotepath)
+                for file in os.listdir('/home/pi/photo/'):
+                    sftp.put(f'/home/pi/photo/{file}', f'/home/rosuser8/photos_of_arts/{file}')
                 end = True
             else:
                 os.system('clear')
@@ -158,19 +172,20 @@ if __name__ == "__main__":
             z=-1
             x=0
         elif k=='=':
-            print(f'making faster (vel = {vel})')
             vel+=0.1
             x=0
             z=0
+            print(f'making faster (vel = {vel})')
         elif k=='-':
-            print(f'making slower (vel = {vel})')
             vel-=0.1
             z=0
             x=0
+            print(f'making slower (vel = {vel})')
         elif k=='p':
-            get_frame()
+            get_frame(count_of_arts)
             z=0
             x=0
+            count_of_arts+=1
         elif k=='left':
             angle_l_r -= 1
             if angle_l_r>=0:
