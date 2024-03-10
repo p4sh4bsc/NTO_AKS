@@ -169,11 +169,11 @@ if __name__ == "__main__":
             z=0
         elif k=='a':
             print(f'rotating left with {vel}m/s speed')
-            z=1
+            z=0.2
             x=0
         elif k=='d':
             print(f'rotating right with {vel}m/s speed')
-            z=-1
+            z=-0.2
             x=0
         elif k=='=':
             vel+=0.1
@@ -287,7 +287,7 @@ if __name__ == "__main__":
             servo_cam.publish(angle_cam)
             x=0
             z=0
-        
+
         elif k=='m':
             if magnit_on:
                 magnit.publish(0)
@@ -304,11 +304,11 @@ if __name__ == "__main__":
         
         if vel<0:
             vel=0.1
-
-        move_func(x, z)
-        time.sleep(vel)
-        move_func(0,0)
-        
+        if x!=0 or z != 0:
+            move_func(x, z)
+            time.sleep(vel)
+            move_func(0,0)
+            
         
 
         
