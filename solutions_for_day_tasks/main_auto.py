@@ -54,7 +54,6 @@ def rotate(angle, vel): # функция для повората ровера н
         #print(current_angle, angle)
         z=vel
         move_func(0, z)
-    time.sleep(0.1)
     move_func(0,0)
     time.sleep(0.1)
     rospy.loginfo('goal of the angle achived')
@@ -68,9 +67,10 @@ if __name__ == "__main__":
     
     rospy.loginfo("success main init")
     
-    move(3.5, 0.2)
+    move(3.3, 0.2)
     print('!!! done first move !!!')
-    rotate(90, 0.2)
+    rotate(88, -0.5)
     print('!!! done rotate !!!')
-    move(3.5, 0.2)
+    move(3.75, 0.2)
     print('!! finally goal achived !!!')
+    move(0,0)
